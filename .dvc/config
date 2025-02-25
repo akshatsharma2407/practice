@@ -1,0 +1,4 @@
+[core]
+    remote = dvcdemo
+['remote "dvcdemo"']
+    url = s3://akshatsharmabucket
