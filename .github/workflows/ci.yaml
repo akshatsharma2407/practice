@@ -21,6 +21,6 @@ jobs :
 
      - name : run pipeline
        env: 
-        DAGSHUB_PAT : ${{ secrets.AKSHAT_SECRET }}
+        DAGSHUB_PAT : ${{ secrets.AKSHAT }}
        run : |
           dvc repro

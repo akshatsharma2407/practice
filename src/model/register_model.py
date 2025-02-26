@@ -8,9 +8,9 @@ import dagshub
 
 
 # Set up DagsHub credentials for MLflow tracking
-dagshub_token = os.getenv("AKSHAT_SECRET")
+dagshub_token = os.getenv("AKSHAT")
 if not dagshub_token:
-    raise EnvironmentError("AKSHAT_SECRET environment variable is not set")
+    raise EnvironmentError("AKSHAT environment variable is not set")
 
 os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
