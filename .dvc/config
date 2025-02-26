@@ -1,4 +1,4 @@
 [core]
-    remote = dvcdemo
-['remote "dvcdemo"']
-    url = C:\Users\aksha\AppData\Local\Temp
+    remote = myremote
+['remote "myremote"']
+    url = s3://akshatsharmabucket
