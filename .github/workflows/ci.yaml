@@ -20,5 +20,7 @@ jobs :
           pip install -r requirements.txt
 
      - name : run pipeline
+       env: 
+        DAGSHUB_PAT : ${{ secrets.AKSHAT_SECRET }}
        run : |
           dvc repro

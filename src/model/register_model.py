@@ -8,10 +8,15 @@ import dagshub
 
 
 
-# Set up MLflow tracking URI
-mlflow.set_tracking_uri('https://dagshub.com/akshatsharma2407/practice.mlflow')
+#  Set up MLflow tracking URI
+dagshub_token = os.getenv('AKSHAT_SECRET')
+if not dagshub_token:
+    raise EnvironmentError('AKSHAT_SECRET env variable is not set')
 
-dagshub.init(repo_owner='akshatsharma2407', repo_name='practice', mlflow=True)
+os.environ['MLFLOW_TRACKING_USERNAME'] = dagshub_token
+os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
+
+mlflow.set_tracking_uri(f'https://dagshub.com/akshatsharma2407/practice.mlflow')
 
 
 # logging configuration
