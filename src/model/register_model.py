@@ -12,7 +12,7 @@ dagshub_token = os.getenv('AKSHAT_SECRET')
 if not dagshub_token:
     raise EnvironmentError('AKSHAT_SECRET env variable is not set')
 
-os.environ['MLFLOW_TRACKING_USERNAME'] = dagshub_token
+os.environ['MLFLOW_TRACKING_USERNAME'] = 'akshatsharma2407'
 os.environ['MLFLOW_TRACKING_PASSWORD'] = dagshub_token
 
 mlflow.set_tracking_uri(f'https://dagshub.com/akshatsharma2407/practice.mlflow')
