@@ -32,3 +32,9 @@ jobs :
         AKSHAT : ${{ secrets.AKSHAT }}
        run : |
           dvc repro
+     
+     - name : run test
+       env :
+        AKSHAT :${{ secrets.AKSHAT }}
+       run: |
+          python -m unittest tests/test_model.py
