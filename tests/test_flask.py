@@ -16,6 +16,7 @@ class FlaskAppTests(unittest.TestCase):
     def test_predict_page(self):
         response = self.client.post('/predict', data=dict(text="I love this!"))
         self.assertEqual(response.status_code, 200) 
+        print(response.data,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<___________')
         self.assertTrue(
             b'Happiness' in response.data or b'Sadness' in response.data,
             "Response should contain either 'Happy' or 'Sad'"
