@@ -3,6 +3,7 @@ import mlflow
 from preprocessing_utility import normalize_text
 import dagshub
 import pickle
+import os
 
 # Set up DagsHub credentials for MLflow tracking
 dagshub_token = os.getenv("AKSHAT")
