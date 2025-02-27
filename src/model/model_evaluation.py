@@ -17,7 +17,7 @@ dagshub_token = os.getenv("AKSHAT")
 if not dagshub_token:
     raise EnvironmentError("AKSHAT environment variable is not set")
 
-os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_USERNAME"] = 'akshatsharma2407'
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
 dagshub_url = "https://dagshub.com"
