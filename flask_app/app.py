@@ -30,6 +30,8 @@ def get_latest_model_version(model_name):
 model_name = "my_model"
 model_version = get_latest_model_version(model_name)
 
+print('---------------------------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',model_version)
+
 model_uri = f'models:/{model_name}/{model_version}'
 model = mlflow.pyfunc.load_model(model_uri)
 
