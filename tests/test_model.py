@@ -1,3 +1,5 @@
+# load test + signature test + performance test
+
 import unittest
 import mlflow
 import os
@@ -10,16 +12,16 @@ class TestModelLoading(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Set up DagsHub credentials for MLflow tracking
-        dagshub_token = os.getenv("AKSHAT")
+        dagshub_token = os.getenv("DAGSHUB_PAT")
         if not dagshub_token:
-            raise EnvironmentError("AKSHAT environment variable is not set")
+            raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
 
         os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
         os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
         dagshub_url = "https://dagshub.com"
-        repo_owner = "akshatsharma2407"
-        repo_name = "practice"
+        repo_owner = "campusx-official"
+        repo_name = "mlops-project-2"
 
         # Set up MLflow tracking URI
         mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
@@ -30,11 +32,11 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model_uri = f'models:/{cls.new_model_name}/{cls.new_model_version}'
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
-        # # Load the vectorizer
-        # cls.vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
+        # Load the vectorizer
+        cls.vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
 
-        # # Load holdout test data
-        # cls.holdout_data = pd.read_csv('data/processed/test_bow.csv')
+        # Load holdout test data
+        cls.holdout_data = pd.read_csv('data/processed/test_bow.csv')
 
     @staticmethod
     def get_latest_model_version(model_name, stage="Staging"):
@@ -44,6 +46,22 @@ class TestModelLoading(unittest.TestCase):
 
     def test_model_loaded_properly(self):
         self.assertIsNotNone(self.new_model)
+
+    def test_model_signature(self):
+        # Create a dummy input for the model based on expected input shape
+        input_text = "hi how are you"
+        input_data = self.vectorizer.transform([input_text])
+        input_df = pd.DataFrame(input_data.toarray(), columns=[str(i) for i in range(input_data.shape[1])])
+
+        # Predict using the new model to verify the input and output shapes
+        prediction = self.new_model.predict(input_df)
+
+        # Verify the input shape
+        self.assertEqual(input_df.shape[1], len(self.vectorizer.get_feature_names_out()))
+
+        # Verify the output shape (assuming binary classification with a single output)
+        self.assertEqual(len(prediction), input_df.shape[0])
+        self.assertEqual(len(prediction.shape), 1)  # Assuming a single output column for binary classification
 
 if __name__ == '__main__':
     unittest.main()
