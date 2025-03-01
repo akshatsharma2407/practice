@@ -74,3 +74,20 @@ jobs :
        if: success()
        run: |
           docker push 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
+     
+     - name: Deploy to EC2
+       if: success()
+       uses: appleboy/ssh-action@v0.1.5
+       with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws configure set default.region ap-southeast-2
+            aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com
+            docker pull 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
+            docker stop my-app || true
+            docker rm my-app || true
+            docker run -p 80:5000 -e AKSHAT=8a0f419a615e6eae881208edae20992709002635 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
