@@ -68,7 +68,7 @@ jobs :
      - name: Tag Docker image
        if: success()
        run: |
-          docker tag emotion1:latest 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion2:latest
+          docker tag emotion2:latest 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion2:latest
 
      - name: Push Docker image to AWS ECR
        if: success()
