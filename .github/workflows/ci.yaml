@@ -75,19 +75,28 @@ jobs :
        run: |
           docker push 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
      
-     - name: Deploy to EC2
+  # Zip the required files
+     - name : Zip files for deployment
        if: success()
-       uses: appleboy/ssh-action@v0.1.5
-       with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws configure set default.region ap-southeast-2
-            aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com
-            docker pull 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
-            docker stop my-app || true
-            docker rm my-app || true
-            docker run -p 80:5000 -e AKSHAT=8a0f419a615e6eae881208edae20992709002635 851725541946.dkr.ecr.ap-southeast-2.amazonaws.com/emotion1:latest
+       run: |
+          zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
+
+      # Upload the ZIP file to S3
+     - name: Upload ZIP to S3
+       if: success()
+       run: |
+          aws s3 cp deployment.zip s3://akshatawss3bucket/deployment.zip
+
+      # Deploy to AWS CodeDeploy using the uploaded ZIP file
+     - name: Deploy to AWS CodeDeploy
+       if: success()
+       run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws deploy create-deployment \
+            --application-name codedeployapp1 \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name bluegreendeployment \
+            --s3-location bucket=akshatawss3bucket,key=deployment.zip,bundleType=zip \
+            --file-exists-behavior OVERWRITE \
+            --region ap-southeast-2  
